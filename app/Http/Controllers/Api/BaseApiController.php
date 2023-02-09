@@ -30,7 +30,7 @@ class BaseApiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function sendError($error, $errorMessages = [], $code = 500)
+    public function sendError($error, $code = 500, $errorMessages = [])
     {
     	$response = [
             'success' => false,

@@ -30,7 +30,8 @@ class AuthService
     if (!Auth::attempt(['email' => $email, 'password' => $password])) {
       throw new InvalidCredentialsException();
     }
-
+    
+    /** @var User $user */
     $user = Auth::user();
     $token =  $user->createToken(env('APP_ENCRIPTION_TOKEN'))->accessToken;
 
@@ -41,8 +42,11 @@ class AuthService
 
   public function logout()
   {
-    $user = Auth::user()->token();
-    return $user->revoke() ? true : false;
+    /** @var User $user */
+    $user = Auth::user();
+
+
+    return $user->token()->revoke() ? true : false;
   }
 
   public function getCurrentUser(): User|null

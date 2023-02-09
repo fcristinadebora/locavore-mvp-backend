@@ -8,6 +8,6 @@ class InvalidCredentialsException extends Exception
 {
     public function __construct()
     {
-        return new Exception("Invalid credentials", "INVALID_CREDENTIALS");
+        parent::__construct('Invalid credentials', 401);
     }
 }

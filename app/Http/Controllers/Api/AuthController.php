@@ -24,18 +24,18 @@ class AuthController extends BaseApiController
             $result = $this->authService->register($dto);
             return $this->sendResponse($result, 'User created');
         } catch (\Throwable $th) {
-            return $this->sendError('Failed creating user', $th->getMessage());
+            return $this->sendError($th->getMessage(), $th->getCode());
         }
     }
 
     public function login(LoginRequest $request)
     {
         try {
-            $result = $this->authService->login($request->input('email'), $request->input('password'));
+            $result = $this->authService->login($request->input('email'), (string) $request->input('password'));
 
             return $this->sendResponse($result, 'Login succeed');
         } catch (\Throwable $th) {
-            return $this->sendError('Login failed', $th->getMessage());
+            return $this->sendError($th->getMessage(), $th->getCode());
         }
     }
 
@@ -46,7 +46,7 @@ class AuthController extends BaseApiController
 
             return $this->sendResponse($result, 'User logged out');
         } catch (\Throwable $th) {
-            return $this->sendError('Logout failed', $th->getMessage());
+            return $this->sendError($th->getMessage(), $th->getCode());
         }
     }
 
@@ -57,7 +57,7 @@ class AuthController extends BaseApiController
 
             return $this->sendResponse($result);
         } catch (\Throwable $th) {
-            return $this->sendError('Failed fetching current user', $th->getMessage());
+            return $this->sendError($th->getMessage(), $th->getCode());
         }
     }
 }
