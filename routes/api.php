@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CitiesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,8 +22,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::middleware('auth.apikey')->group(function () {
-    Route::get('/test', function (Request $request) {
-        echo "ok";
+    Route::get('/health', function (Request $request) {
+        return response()->json(['success' => true]);
     });
     
     Route::post('/register', [AuthController::class, 'register']);
@@ -32,5 +33,7 @@ Route::middleware('auth.apikey')->group(function () {
         Route::delete('/logout', [AuthController::class, 'logout']);
         Route::get('/user', [AuthController::class, 'user']);
     });
+
+    Route::get('/cities/search', [CitiesController::class, 'search']);
 });
 
