@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Services\CityService;
+use App\Models\City;
 use Illuminate\Http\Request;
 
 class CitiesController extends BaseApiController
@@ -13,6 +14,12 @@ class CitiesController extends BaseApiController
     public function search(Request $request)
     {
         $searchString = $request->query('search');
-        return $this->sendResponse($this->cityService->search($searchString));
+        $max = $request->query('max') ?? 0;
+        return $this->sendResponse($this->cityService->search($searchString, $max));
+    }
+
+    public function findById(City $city)
+    {
+        return $this->sendResponse($city);
     }
 }

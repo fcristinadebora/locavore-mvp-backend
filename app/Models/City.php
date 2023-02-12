@@ -20,7 +20,7 @@ class City extends Model
         return $this->belongsTo(Country::class);
     }
 
-    public static function search(string $searchString) {
+    public static function search(string $searchString, int $maxResults = 100) {
         return self::query()
             ->with('country')
             ->where('name', 'like', "%$searchString%")
@@ -29,6 +29,7 @@ class City extends Model
             //     $query->where('name', 'like', "%$searchString%");
             // })
             ->orderBy('name', 'ASC')
+            ->limit($maxResults)
             ->get();
     }
 }

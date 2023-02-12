@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CitiesController;
+use App\Models\City;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,5 +36,6 @@ Route::middleware('auth.apikey')->group(function () {
     });
 
     Route::get('/cities/search', [CitiesController::class, 'search']);
+    Route::get('/cities/{city}', [CitiesController::class, 'findById']);
 });
 
