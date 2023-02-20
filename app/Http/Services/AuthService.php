@@ -18,6 +18,8 @@ class AuthService
       'password' => Hash::make($dto->password)
     ]);
 
+    //TODO Create person associated to user
+
     return [
       'name' => $user->name,
       'email' => $user->email,

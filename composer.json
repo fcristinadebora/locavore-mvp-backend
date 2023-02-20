@@ -8,6 +8,7 @@
         "php": "^8.0.2",
         "ejarnutowski/laravel-api-key": "^1.0",
         "guzzlehttp/guzzle": "^7.2",
+        "jzonta/faker-restaurant": "^2.0",
         "laravel/framework": "^9.19",
         "laravel/passport": "^11.6",
         "laravel/sanctum": "^3.0",

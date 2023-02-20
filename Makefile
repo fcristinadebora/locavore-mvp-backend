@@ -19,5 +19,8 @@ rollback:
 seed:
 	docker exec locavore-mvp-backend-laravel.test-1 php artisan db:seed
 
+seed_class:
+	docker exec locavore-mvp-backend-laravel.test-1 php artisan db:seed --class=$(class)
+
 passport_install:
 	docker exec locavore-mvp-backend-laravel.test-1 php artisan passport:install

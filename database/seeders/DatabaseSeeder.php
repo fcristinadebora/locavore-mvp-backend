@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
 {
     /**
      * Seed the application's database.
+     * Used for the application setup
      *
      * @return void
      */
@@ -18,5 +19,6 @@ class DatabaseSeeder extends Seeder
     {
         (new CountriesSeeder())->run();
         (new CitiesSeeder())->run();
+        (new CategoriesSeeder())->run();
     }
 }

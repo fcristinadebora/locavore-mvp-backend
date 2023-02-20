@@ -13,11 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('people', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id');
-            $table->timestamps();
-            $table->softDeletes();
+        Schema::table('people', function (Blueprint $table) {
+            $table->string('profile_picture')->nullable();
         });
     }
 
@@ -28,6 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('people');
+        Schema::table('people', function (Blueprint $table) {
+            $table->dropColumn('profile_picture');
+        });
     }
 };
