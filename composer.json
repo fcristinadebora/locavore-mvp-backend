@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "doctrine/dbal": "^3.6",
         "ejarnutowski/laravel-api-key": "^1.0",
         "guzzlehttp/guzzle": "^7.2",
         "jzonta/faker-restaurant": "^2.0",
@@ -13,7 +14,10 @@
         "laravel/passport": "^11.6",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
-        "matanyadaev/laravel-eloquent-spatial": "^2.10"
+        "matanyadaev/laravel-eloquent-spatial": "^2.10",
+        "spatie/data-transfer-object": "^3.9",
+        "spatie/laravel-fractal": "^6.0",
+        "tucker-eric/eloquentfilter": "^3.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

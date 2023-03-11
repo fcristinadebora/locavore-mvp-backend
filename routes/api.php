@@ -4,8 +4,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CategoriesController;
 use App\Http\Controllers\Api\CitiesController;
-use App\Models\City;
+use App\Http\Controllers\Api\ProducersController;
+use App\Http\Controllers\Api\ProductsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +38,13 @@ Route::middleware('auth.apikey')->group(function () {
     });
 
     Route::get('/cities/search', [CitiesController::class, 'search']);
-    Route::get('/cities/{city}', [CitiesController::class, 'findById']);
+    Route::get('/cities/{city}', [CitiesController::class, 'getById']);
+
+    Route::get('/products', [ProductsController::class, 'list']);
+    Route::get('/products/{product}', [ProductsController::class, 'getById']);
+    Route::get('/producers', [ProducersController::class, 'list']);
+    Route::get('/producers/{producer}', [ProducersController::class, 'getById']);
+
+    Route::get('/categories', [CategoriesController::class, 'getAll']);
 });
 

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Enums\Availability;
 use App\Models\AvailabilityProduct;
 use App\Models\CategoryProducer;
+use App\Models\CategoryProduct;
 use App\Models\Product;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -40,6 +41,7 @@ class ProductSeeder extends Seeder
             'producer_id' => $producerId,
             'name' => $this->faker->fruitName(),
             'description' => $this->faker->realTextBetween(150, 255),
+            'image' => $this->faker->imageUrl(),
             'price' => $this->faker->randomFloat(2, 0, 999999)
         ]);
         $prod2->save();
@@ -59,8 +61,8 @@ class ProductSeeder extends Seeder
     {
         for($i = 0; $i < $createAmount; $i++) {
             $categoryId = rand(1,11);
-            $categoryProducer = new CategoryProducer([
-                'producer_id' => $productId,
+            $categoryProducer = new CategoryProduct([
+                'product_id' => $productId,
                 'category_id' => $categoryId
             ]);
             $categoryProducer->save();

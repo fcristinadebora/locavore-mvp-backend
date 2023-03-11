@@ -27,8 +27,8 @@ class ProducersSeeder extends Seeder
     {
         $userId = $this->createFakeUser();
         $personId = $this->createFakePerson($userId);
-        $addressId = $this->createFakeAddress($personId);
         $producerId = $this->createFakeProducer($personId);
+        $addressId = $this->createFakeAddress($producerId);
         $this->createFakeCategoriesProducer($producerId);
 
         return $producerId;
@@ -69,13 +69,13 @@ class ProducersSeeder extends Seeder
         return $person->id;
     }
 
-    public function createFakeAddress(int $personId): int
+    public function createFakeAddress(int $producerId): int
     {
         $address = new Address([
             'address' => $this->faker->address(),
             'city_id' => rand(1, 5570),
-            'location' => new Point($this->faker->latitude(), $this->faker->longitude(), 4326),
-            'person_id' => $personId
+            'location' => new Point(-27.2335, -52.026, 4326),
+            'producer_id' => $producerId
         ]);
         $address->save();
         return $address->id;

@@ -18,7 +18,7 @@ class CitiesController extends BaseApiController
         return $this->sendResponse($this->cityService->search($searchString, $max));
     }
 
-    public function findById(City $city)
+    public function getById(City $city)
     {
         return $this->sendResponse($city);
     }
