@@ -25,9 +25,11 @@ class ListProducersRequest extends FormRequest
     {
         return [
             'search' => 'string|nullable',
-            'lat' => 'required|numeric|min:-180|max:180',
-            'lng' => 'required|numeric|min:-90|max:90',
-            'categories' => 'string|nullable'
+            'lat' => 'nullable|numeric|min:-180|max:180',
+            'lng' => 'nullable|numeric|min:-90|max:90',
+            'excludeIds' => 'string|nullable',
+            'categories' => 'string|nullable',
+            'maxDistance' => 'string|nullable'
         ];
     }
 }

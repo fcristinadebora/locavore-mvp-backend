@@ -37,7 +37,7 @@ class ProducersSeeder extends Seeder
     public function createFakeUser(): int
     {
         $user = new User([
-            'name' => $this->faker->company(),
+            'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail,
             'password' =>  Hash::make('123456')
         ]);
@@ -50,7 +50,7 @@ class ProducersSeeder extends Seeder
     {
         $person = new Person([
             'user_id' => $userId,
-            'profile_picture' => $this->faker->imageUrl(640,480,'business')
+            'profile_picture' => $this->faker->imageUrl(640,480,'people')
         ]);
         $person->save();
 
@@ -61,8 +61,10 @@ class ProducersSeeder extends Seeder
     {
         $person = new Producer([
             'person_id' => $personId,
+            'name' => $this->faker->company(),
             'short_description' => $this->faker->sentence(),
-            'long_description' => $this->faker->paragraph()
+            'long_description' => $this->faker->paragraph(),
+            'profile_picture' => $this->faker->imageUrl(640,480,'business')
         ]);
         $person->save();
 
@@ -74,7 +76,7 @@ class ProducersSeeder extends Seeder
         $address = new Address([
             'address' => $this->faker->address(),
             'city_id' => rand(1, 5570),
-            'location' => new Point(-27.2335, -52.026, 4326),
+            'location' => new Point((-27.2335 + $producerId / 500), (-52.026  - $producerId / 500), config("spatial.default_srid")),
             'producer_id' => $producerId
         ]);
         $address->save();

@@ -17,8 +17,10 @@ final class ListProductsInputDto extends DataTransferObject
     public ?string $search;
     public ?Point $coordinates;
     public array $categoryIds = [];
+    public array $excludeIds = [];
     public ?int $producerId;
     public ?int $limit;
+    public ?int $maxDistance;
     public bool $paginate = false;
     public ?PaginationInputDto $pagination;
 
@@ -34,8 +36,10 @@ final class ListProductsInputDto extends DataTransferObject
             'paginate' => $paginate,
             'search' => $request->input('search') ?? "",
             'producerId' => $request->input('producer') ?? 0,
-            'categoryIds' => $request->input('categoryIds') ? explode(",", $request->input('categoryIds')) : [],
+            'categoryIds' => $request->input('categories') ? explode(",", $request->input('categories')) : [],
+            'excludeIds' => $request->input('excludeIds') ? explode(",", $request->input('excludeIds')) : [],
             'limit' => $request->input('limit') ?? 1,
+            'maxDistance' => $request->input('maxDistance') ?? 0,
         ]);
     }
 }

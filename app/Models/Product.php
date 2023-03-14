@@ -48,7 +48,7 @@ class Product extends Model
     public function scopeWhereCategories(Builder $query, array $categories): Builder
     {
         return $query->whereHas("categories", function ($query) use ($categories) {
-            return $query->whereIn("id", $categories);
+            return $query->whereIn("category_id", $categories);
         });
     }
 
@@ -77,48 +77,74 @@ class Product extends Model
         );
     }
 
+    public function scopeWhereMaxDistance(Builder $query, Point $coordinates, float $maxDistance): Builder
+    {
+        return $query->whereHas("producer.address", function ($query) use ($coordinates, $maxDistance) {
+            $query->whereDistance("location", $coordinates, '<=', $maxDistance);
+        });
+    }
+
+    public function scopeExcludeIds(Builder $query, array $excludeIds): Builder
+    {
+        return $query->whereNotIn('id', $excludeIds);
+    }
+
     // ===========================================
     // ========== Business rules functions =======
     // ===========================================
     public static function listPaginated(
-        Point $coordinates,
+        ?Point $coordinates,
         string $search = "",
         array $categories = [], 
-        $currentPage = 1,
-        $perPage = 0,
-        $producerId = 0
+        int $currentPage = 1,
+        int $perPage = 0,
+        int $producerId = 0,
+        array $excludeIds = [],
+        int $maxDistance = 0
     ): LengthAwarePaginator
     {
         if (!$perPage) {
             $perPage = config('models.pagination_defaul_per_page');
         }
 
-        return self::getFromFilters($coordinates, $search, $categories, $producerId)->paginate(perPage: $perPage, page: $currentPage);
+        return self::getFromFilters($coordinates, $search, $categories, $producerId, $excludeIds, $maxDistance)->paginate(perPage: $perPage, page: $currentPage);
     }
 
     public static function list(
-        Point $coordinates,
+        ?Point $coordinates,
         string $search = "",
         array $categories = [],
         int $producerId = 0,
-        int $limit = 0
+        int $limit = 0,
+        array $excludeIds = [],
+        int $maxDistance = 0
     ): Collection
     {
         if (!$limit) {
             $limit = config('models.list_default_max_items');
         }
 
-        $products = self::getFromFilters($coordinates, $search, $categories, $producerId)->limit($limit);
+        $products = self::getFromFilters($coordinates, $search, $categories, $producerId, $excludeIds, $maxDistance)->limit($limit);
 
         return $products->get();
     }
 
 
-    public static function getFromFilters(Point $coordinates, string $search = "", array $categories = [], $producerId = 0): Builder
+    public static function getFromFilters(
+        ?Point $coordinates,
+        string $search = "",
+        array $categories = [],
+        int $producerId = 0,
+        array $excludeIds = [],
+        int $maxDistance = 0
+    ): Builder
     {
-        $query = self::whereSearch($search)
-            ->withDistance($coordinates)
-            ->orderByDistance($coordinates);
+        $query = self::whereSearch($search);
+
+        if ($coordinates) {
+            $query->withDistance($coordinates)
+                ->orderByDistance($coordinates);
+        }
 
         if (!empty($categories)) {
             $query->whereCategories($categories);
@@ -126,6 +152,14 @@ class Product extends Model
 
         if ($producerId) {
             $query->whereProducer($producerId);
+        }
+
+        if ($excludeIds) {
+            $query->excludeIds($excludeIds);
+        }
+
+        if ($maxDistance && $coordinates) {
+            $query->whereMaxDistance($coordinates, $maxDistance);
         }
 
         return $query;

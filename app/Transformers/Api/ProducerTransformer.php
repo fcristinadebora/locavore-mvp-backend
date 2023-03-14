@@ -39,9 +39,9 @@ class ProducerTransformer extends TransformerAbstract
     {
         return [
             'id' => $producer->id,
-            'name' => $producer->person->user->name,
+            'name' => $producer->name,
             'short_description' => $producer->short_description,
-            'image' => $producer->person->profile_picture,
+            'profile_picture' => $producer->profile_picture,
         ];
     }
 

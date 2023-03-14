@@ -25,10 +25,12 @@ class ListProductsRequest extends FormRequest
     {
         return [
             'search' => 'string|nullable',
-            'lat' => 'required|numeric|min:-180|max:180',
-            'lng' => 'required|numeric|min:-90|max:90',
+            'lat' => 'nullable|numeric|min:-180|max:180',
+            'lng' => 'nullable|numeric|min:-90|max:90',
             'categories' => 'string|nullable',
-            'producer' => 'numeric|nullable'
+            'excludeIds' => 'string|nullable',
+            'producer' => 'numeric|nullable',
+            'maxDistance' => 'numeric|nullable'
         ];
     }
 }

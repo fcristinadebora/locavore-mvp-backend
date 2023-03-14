@@ -23,6 +23,8 @@ class ProductService
             categories: $dto->categoryIds,
             currentPage: $dto->pagination->currentPage,
             producerId: $dto->producerId,
+            excludeIds: $dto->excludeIds,
+            maxDistance: $dto->maxDistance
         );
     }
 
@@ -35,7 +37,9 @@ class ProductService
             search: $dto->search,
             categories: $dto->categoryIds,
             producerId: $dto->producerId,
-            limit: $dto->limit
+            limit: $dto->limit,
+            excludeIds: $dto->excludeIds,
+            maxDistance: $dto->maxDistance
         );
     }
 }

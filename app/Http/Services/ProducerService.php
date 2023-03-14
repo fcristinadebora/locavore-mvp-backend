@@ -18,7 +18,9 @@ class ProducerService
             search: $dto->search,
             perPage: $dto->pagination->perPage,
             categories: $dto->categoryIds,
-            currentPage: $dto->pagination->currentPage
+            currentPage: $dto->pagination->currentPage,
+            excludeIds: $dto->excludeIds,
+            maxDistance: $dto->maxDistance
         );
     }
 
@@ -30,7 +32,9 @@ class ProducerService
             coordinates: $dto->coordinates,
             search: $dto->search,
             categories: $dto->categoryIds,
-            limit: $dto->limit
+            limit: $dto->limit,
+            excludeIds: $dto->excludeIds,
+            maxDistance: $dto->maxDistance
         );
     }
 }
