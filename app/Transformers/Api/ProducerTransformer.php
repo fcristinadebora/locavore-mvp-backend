@@ -27,7 +27,8 @@ class ProducerTransformer extends TransformerAbstract
     protected array $availableIncludes = [
         'longDescription',
         'address',
-        'categories'
+        'categories',
+        'contacts'
     ];
     
     /**
@@ -41,7 +42,7 @@ class ProducerTransformer extends TransformerAbstract
             'id' => $producer->id,
             'name' => $producer->name,
             'short_description' => $producer->short_description,
-            'profile_picture' => $producer->profile_picture,
+            'profile_picture' => $producer->getProfilePictureUrl(),
         ];
     }
 
@@ -64,5 +65,12 @@ class ProducerTransformer extends TransformerAbstract
         $categories = collect($producer->categories)->transformWith(new CategoryTransformer())->toArray()['data'];
 
         return $this->Primitive($categories);
+    }
+
+    public function includeContacts(Producer $producer)
+    {
+        $contacts = collect($producer->contacts)->transformWith(new ContactTransformer())->toArray()['data'];
+
+        return $this->Primitive($contacts);
     }
 }

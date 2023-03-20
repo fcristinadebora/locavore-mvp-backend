@@ -13,7 +13,7 @@ use Faker\Generator as Faker;
 
 class ProductSeeder extends Seeder
 {
-    public function __construct(private Faker $faker) {}
+    public function __construct(private Faker $faker, private array $products = []) {}
 
     /**
      * Run the database seeds.
@@ -28,11 +28,32 @@ class ProductSeeder extends Seeder
 
     public function createFakeProducts(int $producerId): void
     {
+        if (!$this->products) {
+            $this->createRandomProducts($producerId);
+            return;
+        }
+
+        foreach ($this->products as $product) {
+            $prod = new Product([
+                'producer_id' => $producerId,
+                'name' => $product['name'],
+                'description' => $this->faker->realTextBetween(150, 255),
+                'image' => $product['img'],
+                'price' => $this->faker->randomFloat(2, 0, 200),
+                'unit_of_price' => 'kg'
+            ]);
+            $prod->save();
+            $this->createFakeCategoriesProduct($prod->id);
+        }
+    }
+
+    public function createRandomProducts(int $producerId) {
         $prod1 = new Product([
             'producer_id' => $producerId,
             'name' => $this->faker->foodName(),
             'description' => $this->faker->realTextBetween(150, 255),
-            'price' => $this->faker->randomFloat(2, 0, 999999)
+            'price' => $this->faker->randomFloat(2, 0, 200),
+            'unit_of_price' => 'unidade'            
         ]);
         $prod1->save();
         $this->createFakeCategoriesProduct($prod1->id);
@@ -42,7 +63,8 @@ class ProductSeeder extends Seeder
             'name' => $this->faker->fruitName(),
             'description' => $this->faker->realTextBetween(150, 255),
             'image' => $this->faker->imageUrl(),
-            'price' => $this->faker->randomFloat(2, 0, 999999)
+            'price' => $this->faker->randomFloat(2, 0, 200),
+            'unit_of_price' => 'litro'
         ]);
         $prod2->save();
         $this->createFakeCategoriesProduct($prod2->id);
@@ -60,7 +82,7 @@ class ProductSeeder extends Seeder
     public function createFakeCategoriesProduct(int $productId, int $createAmount = 5): void
     {
         for($i = 0; $i < $createAmount; $i++) {
-            $categoryId = rand(1,11);
+            $categoryId = rand(1,5);
             $categoryProducer = new CategoryProduct([
                 'product_id' => $productId,
                 'category_id' => $categoryId

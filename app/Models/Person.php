@@ -13,6 +13,10 @@ class Person extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id'
+    ];
+
     public function addresses(): HasMany
     {
         return $this->hasMany(Address::class);

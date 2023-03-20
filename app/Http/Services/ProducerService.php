@@ -9,6 +9,14 @@ use Illuminate\Database\Eloquent\Collection;
 
 class ProducerService
 {
+    public function createProducer(int $personId, string $name): Producer
+    {
+        return Producer::create([
+            'person_id' => $personId,
+            'name' => $name
+        ]);
+    }
+
     public function listPaginated(
         ListProducersInputDto $dto
     ): LengthAwarePaginator

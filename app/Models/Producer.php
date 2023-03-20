@@ -18,6 +18,13 @@ class Producer extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'person_id',
+        'name'
+    ];
+
+    public const IMAGES_FOLDER = '/producers';
+
     // ============================
     // ========== Relations =======
     // ============================
@@ -54,14 +61,7 @@ class Producer extends Model
     // Apply here the filters suitable for search
     public function scopeWhereSearch(Builder $query, $searchString): Builder
     {
-        return $query->whereHas('person.user', function ($query) use ($searchString) {
-            if (empty($searchString)) {
-                return;
-            }
-
-            $searchString = strtolower($searchString);
-            $query->whereRaw("LOWER(name) like '%{$searchString}%'");
-        });
+        return $query->whereRaw("LOWER(name) like '%{$searchString}%'");
     }
 
     public function scopeWithDistance(Builder $query, Point $coordinates): Builder
@@ -169,5 +169,17 @@ class Producer extends Model
         }
 
         return $query;
+    }
+
+    public function getProfilePictureUrl() {
+        if(!$this->profile_picture) {
+            return null;
+        }
+
+        if (filter_var($this->profile_picture, FILTER_VALIDATE_URL)) {
+            return $this->profile_picture;
+        }
+
+        return asset('storage' .  self::IMAGES_FOLDER . '/' . $this->profile_picture);
     }
 }

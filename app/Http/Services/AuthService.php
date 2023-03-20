@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Dto\RegisterDto;
+use App\Enums\UserType;
 use App\Exceptions\InvalidCredentialsException;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -10,6 +11,11 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthService
 {
+  public function __construct(
+    private PersonService $personService,
+    private ProducerService $producerService
+  ) { }
+
   public function register(RegisterDto $dto): array
   {
     $user = User::create([
@@ -18,7 +24,11 @@ class AuthService
       'password' => Hash::make($dto->password)
     ]);
 
-    //TODO Create person associated to user
+    $person = $this->personService->createPerson($user->id);
+
+    if ($dto->type == UserType::PRODUCER || $dto->type == UserType::PRODUCER_AND_CONSUMER) {
+      $this->producerService->createProducer($person->id, $dto->name);
+    }
 
     return [
       'name' => $user->name,
