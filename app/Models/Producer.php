@@ -54,6 +54,11 @@ class Producer extends Model
         return $this->belongsToMany(Category::class, 'category_producers');
     }
 
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(PersonFavoriteProducer::class);
+    }
+
     // ==================================
     // ========== Scope functions =======
     // ==================================
@@ -103,6 +108,20 @@ class Producer extends Model
         return $query->whereNotIn('id', $excludeIds);
     }
 
+    public function scopeWhereIsFavorite(Builder $query): Builder
+    {
+        // TODO improve this later
+        $user = auth('api')->user();
+
+        if (!$user) {
+            return $query->whereRaw("false");
+        }
+        
+        return $query->whereHas('favorites', function ($query) use ($user) {
+            return $query->where('person_id', $user->person->id);
+        });
+    }
+
     // ===========================================
     // ========== Business rules functions =======
     // ===========================================
@@ -114,14 +133,15 @@ class Producer extends Model
         int $currentPage = 1,
         int $perPage = 0,
         array $excludeIds = [],
-        int $maxDistance = 0
+        int $maxDistance = 0,
+        bool $onlyFavorites = false
     ): LengthAwarePaginator
     {
         if (!$perPage) {
             $perPage = config('models.pagination_defaul_per_page');
         }
 
-        return self::getFromFilters($coordinates, $search, $categories, $excludeIds, $maxDistance)->paginate(perPage: $perPage, page: $currentPage);
+        return self::getFromFilters($coordinates, $search, $categories, $excludeIds, $maxDistance, $onlyFavorites)->paginate(perPage: $perPage, page: $currentPage);
     }
 
     public static function List(
@@ -130,14 +150,15 @@ class Producer extends Model
         array $categories = [], 
         int $limit = 0,
         array $excludeIds = [],
-        int $maxDistance = 0
+        int $maxDistance = 0,
+        bool $onlyFavorites = false
     ): Collection
     {
         if (!$limit) {
             $limit = config('models.list_default_max_items');
         }
 
-        return self::getFromFilters($coordinates, $search, $categories, $excludeIds, $maxDistance)->limit($limit)->get();
+        return self::getFromFilters($coordinates, $search, $categories, $excludeIds, $maxDistance, $onlyFavorites)->limit($limit)->get();
     }
 
 
@@ -146,7 +167,8 @@ class Producer extends Model
         string $search = "",
         array $categories = [],
         array $excludeIds = [],
-        int $maxDistance = 0
+        int $maxDistance = 0,
+        bool $onlyFavorites = false
     ): Builder
     {
         $query = self::whereSearch($search);
@@ -166,6 +188,10 @@ class Producer extends Model
 
         if ($maxDistance && $coordinates) {
             $query->whereMaxDistance($coordinates, $maxDistance);
+        }
+
+        if ($onlyFavorites) {
+            $query->whereIsFavorite();
         }
 
         return $query;

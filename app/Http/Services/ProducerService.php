@@ -28,7 +28,8 @@ class ProducerService
             categories: $dto->categoryIds,
             currentPage: $dto->pagination->currentPage,
             excludeIds: $dto->excludeIds,
-            maxDistance: $dto->maxDistance
+            maxDistance: $dto->maxDistance,
+            onlyFavorites: $dto->onlyFavorites
         );
     }
 
@@ -42,7 +43,8 @@ class ProducerService
             categories: $dto->categoryIds,
             limit: $dto->limit,
             excludeIds: $dto->excludeIds,
-            maxDistance: $dto->maxDistance
+            maxDistance: $dto->maxDistance,
+            onlyFavorites: $dto->onlyFavorites
         );
     }
 }

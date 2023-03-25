@@ -5,6 +5,7 @@ namespace App\Transformers\Api;
 use App\Enums\Availability;
 use App\Models\Address;
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
 use League\Fractal\ParamBag;
 use League\Fractal\Resource\Collection;
 use League\Fractal\TransformerAbstract;
@@ -33,7 +34,8 @@ class ProductTransformer extends TransformerAbstract
         'address',
         'availability',
         'categories',
-        'producer'
+        'producer',
+        'is_current_user_favorite'
     ];
     
     /**

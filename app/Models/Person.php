@@ -22,6 +22,16 @@ class Person extends Model
         return $this->hasMany(Address::class);
     }
 
+    public function favoriteProducts(): HasMany
+    {
+        return $this->hasMany(PersonFavoriteProducts::class);
+    }
+
+    public function favoriteProducers(): HasMany
+    {
+        return $this->hasMany(PersonFavoriteProducers::class);
+    }
+
     public function producer(): HasOne
     {
         return $this->hasOne(Producer::class);

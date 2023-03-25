@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 
@@ -35,6 +36,11 @@ class Product extends Model
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class, 'category_products');
+    }
+
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(PersonFavoriteProduct::class);
     }
     
     // ==================================
@@ -63,6 +69,20 @@ class Product extends Model
     {
         return $query->with("producer.address", function ($query) use ($coordinates) {
             $query->withDistance("location", $coordinates);
+        });
+    }
+
+    public function scopeWhereIsFavorite(Builder $query): Builder
+    {
+        // TODO improve this later
+        $user = auth('api')->user();
+
+        if (!$user) {
+            return $query->whereRaw("false");
+        }
+        
+        return $query->whereHas('favorites', function ($query) use ($user) {
+            return $query->where('person_id', $user->person->id);
         });
     }
 
@@ -102,14 +122,15 @@ class Product extends Model
         int $perPage = 0,
         int $producerId = 0,
         array $excludeIds = [],
-        int $maxDistance = 0
+        int $maxDistance = 0,
+        bool $onlyFavorites = false,
     ): LengthAwarePaginator
     {
         if (!$perPage) {
             $perPage = config('models.pagination_defaul_per_page');
         }
 
-        return self::getFromFilters($coordinates, $search, $categories, $producerId, $excludeIds, $maxDistance)->paginate(perPage: $perPage, page: $currentPage);
+        return self::getFromFilters($coordinates, $search, $categories, $producerId, $excludeIds, $maxDistance, $onlyFavorites)->paginate(perPage: $perPage, page: $currentPage);
     }
 
     public static function list(
@@ -119,14 +140,15 @@ class Product extends Model
         int $producerId = 0,
         int $limit = 0,
         array $excludeIds = [],
-        int $maxDistance = 0
+        int $maxDistance = 0,
+        bool $onlyFavorites = false,
     ): Collection
     {
         if (!$limit) {
             $limit = config('models.list_default_max_items');
         }
 
-        $products = self::getFromFilters($coordinates, $search, $categories, $producerId, $excludeIds, $maxDistance)->limit($limit);
+        $products = self::getFromFilters($coordinates, $search, $categories, $producerId, $excludeIds, $maxDistance, $onlyFavorites)->limit($limit);
 
         return $products->get();
     }
@@ -138,7 +160,8 @@ class Product extends Model
         array $categories = [],
         int $producerId = 0,
         array $excludeIds = [],
-        int $maxDistance = 0
+        int $maxDistance = 0,
+        bool $onlyFavorites = false
     ): Builder
     {
         $query = self::whereSearch($search);
@@ -162,6 +185,10 @@ class Product extends Model
 
         if ($maxDistance && $coordinates) {
             $query->whereMaxDistance($coordinates, $maxDistance);
+        }
+
+        if ($onlyFavorites) {
+            $query->whereIsFavorite();
         }
 
         return $query;

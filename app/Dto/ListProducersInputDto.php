@@ -23,6 +23,7 @@ final class ListProducersInputDto extends DataTransferObject
     public ?int $maxDistance;
     public bool $paginate = false;
     public ?PaginationInputDto $pagination;
+    public bool $onlyFavorites = false;
 
     public static function fromRequest(Request $request): self
     {
@@ -39,6 +40,7 @@ final class ListProducersInputDto extends DataTransferObject
             'excludeIds' => $request->input('excludeIds') ? explode(",", $request->input('excludeIds')) : [],
             'limit' => $request->input('limit') ?? 1,
             'maxDistance' => $request->input('maxDistance') ?? 0,
+            'onlyFavorites' => $request->input('onlyFavorites') ?? 0,
         ]);
     }
 }

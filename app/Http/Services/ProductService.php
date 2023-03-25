@@ -24,7 +24,8 @@ class ProductService
             currentPage: $dto->pagination->currentPage,
             producerId: $dto->producerId,
             excludeIds: $dto->excludeIds,
-            maxDistance: $dto->maxDistance
+            maxDistance: $dto->maxDistance,
+            onlyFavorites: $dto->onlyFavorites
         );
     }
 
@@ -39,7 +40,8 @@ class ProductService
             producerId: $dto->producerId,
             limit: $dto->limit,
             excludeIds: $dto->excludeIds,
-            maxDistance: $dto->maxDistance
+            maxDistance: $dto->maxDistance,
+            onlyFavorites: $dto->onlyFavorites
         );
     }
 }
