@@ -42,6 +42,29 @@ class Product extends Model
     {
         return $this->hasMany(PersonFavoriteProduct::class);
     }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(ProductReview::class);
+    }
+
+    public function averageReview()
+    {
+        return $this->reviews()
+            ->selectRaw("avg(rate) as rate, product_id")
+            ->groupBy('product_id');
+    }
+
+    public function getAverageReviewAttribute()
+    {
+        if ( ! array_key_exists('averageReview', $this->relations)) {
+            $this->load('averageReview');
+        }
+
+        $relation = $this->getRelation('averageReview')->first();
+
+        return ($relation) ? round($relation->rate, 2) : null;
+    }
     
     // ==================================
     // ========== Scope functions =======
@@ -204,5 +227,16 @@ class Product extends Model
         }
 
         return asset('storage' .  self::IMAGES_FOLDER . '/' . $this->image);
+    }
+
+    public static function getBestRated(int $limit) {
+        return self::withAvg('reviews', 'rate')
+            ->withCount('reviews')
+            ->limit($limit)
+            ->orderBy('reviews_avg_rate', 'DESC')
+            ->orderBy('reviews_count', 'DESC')
+            ->inRandomOrder()
+            ->inRandomOrder()
+            ->get();
     }
 }

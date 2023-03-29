@@ -47,4 +47,10 @@ class ProducerService
             onlyFavorites: $dto->onlyFavorites
         );
     }
+
+
+    public function getBestRated(int $limit): Collection
+    {
+        return Producer::getBestRated($limit ?? 0);
+    }
 }

@@ -52,4 +52,18 @@ class ProducersController extends BaseApiController
 
         return $this->sendResponse($producer);
     }
+
+    public function getBestRated(Request $request) {
+        $limit = $request->input('limit') ?? config('models.list_default_max_items');
+
+        $includes = $request->get('include') ? explode(',', $request->get('include')) : [];
+
+        $items = $this->transformCollection(
+            $this->producerService->getBestRated($limit),
+            new ProducerTransformer(),
+            $includes
+        );
+
+        return $this->sendResponse($items);
+    }
 }

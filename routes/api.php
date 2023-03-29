@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\CitiesController;
 use App\Http\Controllers\Api\FavoritesController;
 use App\Http\Controllers\Api\ProducersController;
 use App\Http\Controllers\Api\ProductsController;
+use App\Http\Controllers\Api\ReviewsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,10 +34,19 @@ Route::middleware('auth.apikey')->group(function () {
     Route::get('/cities/{city}', [CitiesController::class, 'getById']);
 
     Route::get('/products', [ProductsController::class, 'list']);
-    Route::get('/products/{product}', [ProductsController::class, 'getById']);
     Route::get('/producers', [ProducersController::class, 'list']);
+
+    Route::get('/products/best-rated', [ProductsController::class, 'getBestRated']);
+    Route::get('/producers/best-rated', [ProducersController::class, 'getBestRated']);
+
+    Route::get('/products/{product}', [ProductsController::class, 'getById']);
     Route::get('/producers/{producer}', [ProducersController::class, 'getById']);
 
+    Route::get('/products/{product}/reviews', [ReviewsController::class, 'listProductReviews']);
+    Route::get('/producers/{producer}/reviews', [ReviewsController::class, 'listProducerReviews']);
+
+    
+    
     Route::get('/categories', [CategoriesController::class, 'getAll']);
 
     // User-guarded routes
@@ -50,6 +60,11 @@ Route::middleware('auth.apikey')->group(function () {
         Route::get('/favorites/producers/{producer}', [FavoritesController::class, 'isFavoriteProducer']);
         Route::get('/favorites/products', [FavoritesController::class, 'getPersonFavoriteProducts']);
         Route::get('/favorites/producers', [FavoritesController::class, 'getPersonFavoriteProducers']);
+
+        Route::post('/products/{product}/reviews', [ReviewsController::class, 'createProductReview']);
+        Route::post('/producers/{producer}/reviews', [ReviewsController::class, 'createProducerReview']);
+
+        
        
         // Producer quiz
         // Route::post('/quiz') //Update quiz step

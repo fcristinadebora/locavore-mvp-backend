@@ -57,4 +57,18 @@ class ProductsController extends BaseApiController
 
         return $this->sendResponse($product);
     }
+
+    public function getBestRated(Request $request) {
+        $limit = $request->input('limit') ?? config('models.list_default_max_items');
+
+        $includes = $request->get('include') ? explode(',', $request->get('include')) : [];
+
+        $items = $this->transformCollection(
+            $this->productService->getBestRated($limit),
+            new ProductTransformer(),
+            $includes
+        );
+
+        return $this->sendResponse($items);
+    }
 }

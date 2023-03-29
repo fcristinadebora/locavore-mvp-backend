@@ -59,6 +59,28 @@ class Producer extends Model
         return $this->hasMany(PersonFavoriteProducer::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(ProducerReview::class);
+    }
+
+    public function averageReview()
+    {
+        return $this->reviews()
+            ->selectRaw("avg(rate) as rate, producer_id")
+            ->groupBy('producer_id');
+    }
+
+    public function getAverageReviewAttribute()
+    {
+        if ( ! array_key_exists('averageReview', $this->relations)) {
+            $this->load('averageReview');
+        }
+
+        $relation = $this->getRelation('averageReview')->first();
+
+        return ($relation) ? round($relation->rate, 2) : null;
+    }
     // ==================================
     // ========== Scope functions =======
     // ==================================
@@ -207,5 +229,16 @@ class Producer extends Model
         }
 
         return asset('storage' .  self::IMAGES_FOLDER . '/' . $this->profile_picture);
+    }
+
+    public static function getBestRated(int $limit) {
+        return self::withAvg('reviews', 'rate')
+            ->withCount('reviews')
+            ->limit($limit)
+            ->orderBy('reviews_avg_rate', 'DESC')
+            ->orderBy('reviews_count', 'DESC')
+            ->inRandomOrder()
+            ->inRandomOrder()
+            ->get();
     }
 }

@@ -35,7 +35,8 @@ class ProductTransformer extends TransformerAbstract
         'availability',
         'categories',
         'producer',
-        'is_current_user_favorite'
+        'is_current_user_favorite',
+        'average_review'
     ];
     
     /**
@@ -63,7 +64,7 @@ class ProductTransformer extends TransformerAbstract
 
     public function includeAvailability(Product $product)
     {
-        return $this->Primitive($product->availability, function ($availabilityCollection) {
+        return new Primitive($product->availability, function ($availabilityCollection) {
             return $availabilityCollection->toArray();
         });
     }
@@ -72,7 +73,16 @@ class ProductTransformer extends TransformerAbstract
     {
         $categories = collect($product->categories)->transformWith(new CategoryTransformer())->toArray()['data'];
 
-        return $this->Primitive($categories);
+        return new Primitive($categories);
+    }
+
+    public function includeAverageReview(Product $product)
+    {
+        if ($product->reviews_avg_rate) {
+            return new Primitive((float) $product->reviews_avg_rate);
+        }
+
+        return new Primitive($product->averageReview);
     }
 
     public function includeAddress(Product $product): ?Item

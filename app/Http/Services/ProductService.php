@@ -44,4 +44,9 @@ class ProductService
             onlyFavorites: $dto->onlyFavorites
         );
     }
+
+    public function getBestRated(int $limit): Collection
+    {
+        return Product::getBestRated($limit ?? 0);
+    }
 }

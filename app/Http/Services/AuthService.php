@@ -63,6 +63,13 @@ class AuthService
 
   public function getCurrentUser(): User|null
   {
-    return Auth::user() ?? null;
+    $user = Auth::user();
+    if (!$user) {
+      return null;
+    }
+    
+    $user->person = $user->person;
+
+    return $user ?? null;
   }
 }

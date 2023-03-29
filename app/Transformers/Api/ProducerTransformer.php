@@ -28,7 +28,8 @@ class ProducerTransformer extends TransformerAbstract
         'longDescription',
         'address',
         'categories',
-        'contacts'
+        'contacts',
+        'average_review'
     ];
     
     /**
@@ -58,6 +59,15 @@ class ProducerTransformer extends TransformerAbstract
         }
 
         return $this->item($producer->address, new AddressTransformer);
+    }
+
+    public function includeAverageReview(Producer $producer)
+    {
+        if ($producer->reviews_avg_rate) {
+            return $this->Primitive((float) $producer->reviews_avg_rate);
+        }
+
+        return $this->Primitive($producer->averageReview);
     }
 
     public function includeCategories(Producer $producer)
