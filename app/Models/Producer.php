@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\ModelEventLogger;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -16,11 +17,18 @@ use MatanYadaev\EloquentSpatial\Objects\Point;
 
 class Producer extends Model
 {
-    use HasFactory;
+    use HasFactory, ModelEventLogger;
 
-    protected $fillable = [
+    protected static $recordEvents = ['updated'];
+
+    public $fillable = [
         'person_id',
-        'name'
+        'name',
+        'is_enabled',
+        'name',
+        'short_description',
+        'long_description',
+        'categories',
     ];
 
     public const IMAGES_FOLDER = '/producers';

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateProducerReviewRequest extends FormRequest
+class DeleteAccountRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,7 @@ class CreateProducerReviewRequest extends FormRequest
     public function rules()
     {
         return [
-            'rate' => 'required|numeric|min:0|max:5',
-            'comment' => 'sometimes|string',
+            'password' => 'required|string'
         ];
     }
 }

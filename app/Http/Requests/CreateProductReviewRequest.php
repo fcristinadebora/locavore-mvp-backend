@@ -25,7 +25,7 @@ class CreateProductReviewRequest extends FormRequest
     {
         return [
             'rate' => 'numeric|required|min:0|max:5',
-            'comment' => 'nullable|string',
+            'comment' => 'sometimes|string',
         ];
     }
 }

@@ -2,9 +2,12 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\UserType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
+use Illuminate\Support\Facades\Auth;
 
-class CreateProducerReviewRequest extends FormRequest
+class UpdateProducerAddressRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +27,10 @@ class CreateProducerReviewRequest extends FormRequest
     public function rules()
     {
         return [
-            'rate' => 'required|numeric|min:0|max:5',
-            'comment' => 'sometimes|string',
+            'city_id' => 'required|numeric|exists:cities,id',
+            'address' => 'required|string',
+            'lat' => 'nullable|numeric|min:-180|max:180',
+            'lng' => 'nullable|numeric|min:-90|max:90'
         ];
     }
 }

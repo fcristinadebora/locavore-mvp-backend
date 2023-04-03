@@ -47,4 +47,24 @@ class User extends Authenticatable
     {
         return $this->hasOne(Person::class);
     }
+
+    public function producer(): HasOne
+    {
+        return $this->person()->producer();
+    }
+
+    // this is a recommended way to declare event handlers
+    public static function boot() {
+        parent::boot();
+        self::deleting(function($user) { // before delete() method call this
+            $user->person->address && $user->person->address()->forceDelete();
+            $user->person->favoriteProducts && $user->person->favoriteProducts()->forceDelete();
+            $user->person->favoriteProducers && $user->person->favoriteProducers()->forceDelete();
+            $user->person->producer && $user->person->producer->address && $user->person->producer->address()->forceDelete();
+            $user->person->producer && $user->person->producer->products()->forceDelete();
+            $user->person->producer && $user->person->producer->categories()->forceDelete();
+            $user->person->producer && $user->person->producer->forceDelete();
+            $user->person->producer && $user->person->forceDelete();
+        });
+    }
 }

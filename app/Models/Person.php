@@ -24,12 +24,22 @@ class Person extends Model
 
     public function favoriteProducts(): HasMany
     {
-        return $this->hasMany(PersonFavoriteProducts::class);
+        return $this->hasMany(PersonFavoriteProduct::class);
     }
 
     public function favoriteProducers(): HasMany
     {
-        return $this->hasMany(PersonFavoriteProducers::class);
+        return $this->hasMany(PersonFavoriteProducer::class);
+    }
+
+    public function productReviews(): HasMany
+    {
+        return $this->hasMany(ProductReview::class);
+    }
+
+    public function producerReviews(): HasMany
+    {
+        return $this->hasMany(ProducerReview::class);
     }
 
     public function producer(): HasOne

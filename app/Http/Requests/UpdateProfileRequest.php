@@ -2,9 +2,12 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\UserType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
+use Illuminate\Support\Facades\Auth;
 
-class CreateProducerReviewRequest extends FormRequest
+class UpdateProfileRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +26,11 @@ class CreateProducerReviewRequest extends FormRequest
      */
     public function rules()
     {
+        $currentUser = Auth::user();
+
         return [
-            'rate' => 'required|numeric|min:0|max:5',
-            'comment' => 'sometimes|string',
+            'name' => 'sometimes|string',
+            'email' => "sometimes|email|unique:users,email,{$currentUser->id}"
         ];
     }
 }

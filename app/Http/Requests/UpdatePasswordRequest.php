@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\UserType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
-class CreateProducerReviewRequest extends FormRequest
+class UpdatePasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +26,9 @@ class CreateProducerReviewRequest extends FormRequest
     public function rules()
     {
         return [
-            'rate' => 'required|numeric|min:0|max:5',
-            'comment' => 'sometimes|string',
+            'current_password' => 'required|string',
+            'password' => 'required|string',
+            'password_confirm' => 'required|string|same:password'
         ];
     }
 }

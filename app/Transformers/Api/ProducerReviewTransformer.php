@@ -39,9 +39,9 @@ class ProducerReviewTransformer extends TransformerAbstract
             'person_id' => $review->person_id,
             'rate' => $review->rate,
             'comment' => $review->comment,
-            'person' => [
+            'person' => $review->person && $review->person->user ? [
                 'name' => $review->person->user->name
-            ],
+            ] : null,
             'created_at' => $review->created_at
         ];
     }
