@@ -72,6 +72,7 @@ Route::middleware('auth.apikey')->group(function () {
 
         Route::put('/account/producer', [ProducerManagementController::class, 'updateProducer']);
         Route::put('/account/producer/address', [ProducerManagementController::class, 'updateAddress']);
+        Route::post('/account/producer/profile-picture', [ProducerManagementController::class, 'updateProfilePicture']);
         // Producer quiz
         // Route::post('/quiz') //Update quiz step
         // Route::post('categories/custom') //create custom category

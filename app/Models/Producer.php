@@ -227,7 +227,8 @@ class Producer extends Model
         return $query;
     }
 
-    public function getProfilePictureUrl() {
+    public function getProfilePictureUrl(): string
+    {
         if(!$this->profile_picture) {
             return null;
         }
@@ -236,7 +237,20 @@ class Producer extends Model
             return $this->profile_picture;
         }
 
-        return asset('storage' .  self::IMAGES_FOLDER . '/' . $this->profile_picture);
+        return asset('storage' .  $this->getProfilePicturePath());
+    }
+
+    public function getProfilePicturePath(): ?string
+    {
+        if(!$this->profile_picture) {
+            return null;
+        }
+
+        if (filter_var($this->profile_picture, FILTER_VALIDATE_URL)) {
+            return null;
+        }
+
+        return self::IMAGES_FOLDER . '/' . $this->profile_picture;
     }
 
     public static function getBestRated(int $limit) {

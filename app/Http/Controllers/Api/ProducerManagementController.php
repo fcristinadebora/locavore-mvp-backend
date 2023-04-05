@@ -7,10 +7,13 @@ use App\Dto\UpdateProducerInputDto;
 use App\Http\Requests\DeleteAccountRequest;
 use App\Http\Requests\UpdatePasswordRequest;
 use App\Http\Requests\UpdateProducerAddressRequest;
+use App\Http\Requests\UpdateProducerProfilePictureRequest;
 use App\Http\Requests\UpdateProducerRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Services\AuthService;
 use App\Http\Services\ProducerManagementService;
+use App\Transformers\Api\ProducerTransformer;
+use App\Transformers\Api\ProductTransformer;
 
 class ProducerManagementController extends BaseApiController
 {
@@ -39,7 +42,17 @@ class ProducerManagementController extends BaseApiController
         ]);
     }
 
-    // public fucntion updateProfilePicture
-    // public function updateContacts
-    // public function updateAddress
+    public function updateProfilePicture(UpdateProducerProfilePictureRequest $request)
+    {
+        $deleteCurrent = $request->post('delete_current') == 1 || $request->post('delete_current') == 'true';
+        $file = $request->file() ? $request->file()['files'] : null;
+        
+        return $this->sendResponse([
+            'success' => true,
+            'proucer' => fractal(
+                $this->producerManagementService->updateProfilePicture(file: $file ?? null, deleteCurrent: $deleteCurrent ?? false),
+                new ProducerTransformer()
+            )
+        ]);
+    }
 }
