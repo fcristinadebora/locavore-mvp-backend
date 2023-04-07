@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\ProducersController;
 use App\Http\Controllers\Api\ProductsController;
 use App\Http\Controllers\Api\ProductsManagementController;
 use App\Http\Controllers\Api\ProfileManagementController;
+use App\Http\Controllers\Api\QuizesManagementController;
 use App\Http\Controllers\Api\ReviewsController;
 
 /*
@@ -82,6 +83,12 @@ Route::middleware('auth.apikey')->group(function () {
         Route::post('/account/producer/products', [ProductsManagementController::class, 'create']);
         Route::put('/account/producer/products/{product}', [ProductsManagementController::class, 'update']);
         Route::delete('/account/producer/products/{product}', [ProductsManagementController::class, 'delete']);
+
+        Route::get('/account/producer/quizes', [QuizesManagementController::class, 'list']);
+        Route::post('/account/producer/quizes', [QuizesManagementController::class, 'create']);
+        Route::get('/account/producer/quizes/{quiz}', [QuizesManagementController::class, 'getById']);
+        Route::put('/account/producer/quizes/{quiz}', [QuizesManagementController::class, 'update']);
+        Route::delete('/account/producer/quizes/{quiz}', [QuizesManagementController::class, 'delete']);
     });
 });
 

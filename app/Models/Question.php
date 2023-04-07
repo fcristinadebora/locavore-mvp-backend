@@ -16,4 +16,10 @@ class Question extends Model
         'type',
         'options',
     ];
+
+    public function getOptionsAttribute(): mixed
+    {
+        $hasOptions = $this->attributes['options'] && $this->attributes['options'] != 'null';
+        return $hasOptions ? json_decode($this->attributes['options']) : null;
+    }
 }

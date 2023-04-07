@@ -33,9 +33,9 @@ class ProductManagementService
     $product->producer_id = $producer->id;
 
     if ($dto->image) {
-        $uploadedFile = $this->fileService->upload($dto->image, Product::IMAGES_FOLDER);
-        $product->image = $uploadedFile ? $uploadedFile->getFilename() : null;
-        $dto->image = null;
+      $uploadedFile = $this->fileService->upload($dto->image, Product::IMAGES_FOLDER);
+      $product->image = $uploadedFile ? $uploadedFile->getFilename() : null;
+      $dto->image = null;
     }
     
     foreach ($dto as $key => $value) {

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('question');
             $table->integer('order')->default(0);
             $table->string('type');
-            $table->json('options');
+            $table->json('options')->nullable();
             $table->timestamps();
         });
     }

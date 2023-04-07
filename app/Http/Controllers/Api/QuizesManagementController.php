@@ -2,44 +2,59 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Dto\ListProductsInputDto;
-use App\Http\Requests\ListProductsRequest;
-use Illuminate\Http\Request;
-use App\Http\Services\ProductService;
-use App\Http\Traits\TransformerTrait;
-use App\Models\Product;
-use App\Transformers\Api\ProductTransformer;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Support\Collection as SupportCollection;
-use League\Fractal\TransformerAbstract;
-use MatanYadaev\EloquentSpatial\Objects\Point;
+use App\Dto\QuizDto;
+use App\Http\Requests\CreateQuizRequest;
+use App\Http\Requests\UpdateQuizRequest;
+use App\Http\Services\ProducerManagementService;
+use App\Http\Services\QuizManagementService;
+use App\Models\Quiz;
 
-class ContactManagementController extends BaseApiController
+class QuizesManagementController extends BaseApiController
 {
-    use TransformerTrait;
-
-    public function __construct()
-    {
-    }
+    public function __construct(
+        private QuizManagementService $quizService,
+        private ProducerManagementService $producerService
+    ) {}
 
     public function list() {
-
+        $this->producerService->getCurrentProducerOrFail();
+        return $this->sendResponse([
+            'success' => true,
+            'data' => $this->quizService->list()
+        ]);
     }
 
-    public function findById () {
+    public function getById (Quiz $quiz) {
+        $quiz->load('questions');
 
+        return $this->sendResponse([
+            'success' => true,
+            'quiz' => $quiz
+        ]);
     }
 
-    public function create () {
+    public function create (CreateQuizRequest $request) {
+        $dto = QuizDto::fromRequest($request);
 
+        return $this->sendResponse([
+            'success' => true,
+            'quiz' => $this->quizService->create($dto)
+        ], 201);
     }
 
-    public function update () {
+    public function update (Quiz $quiz, UpdateQuizRequest $request) {
+        $dto = QuizDto::fromRequest($request);
 
+        return $this->sendResponse([
+            'success' => true,
+            'quiz' => $this->quizService->update($quiz, $dto)
+        ]);
     }
 
-    public function delete () {
-        
+    public function delete(Quiz $quiz)
+    {
+        return $this->sendResponse([
+            'success' => $this->quizService->delete($quiz)
+        ]);
     }
 }
