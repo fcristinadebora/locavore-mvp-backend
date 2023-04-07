@@ -62,7 +62,7 @@ class ProducerManagementController extends BaseApiController
         
         return $this->sendResponse([
             'success' => true,
-            'proucer' => fractal(
+            'producer' => fractal(
                 $this->producerManagementService->updateProfilePicture(file: $file ?? null, deleteCurrent: $deleteCurrent ?? false),
                 new ProducerTransformer()
             )

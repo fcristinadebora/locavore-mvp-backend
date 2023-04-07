@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
@@ -17,6 +18,17 @@ use MatanYadaev\EloquentSpatial\Objects\Point;
 class Product extends Model
 {
     use HasFactory;
+
+    public $fillable = [
+        'is_active',
+        'producer_id',
+        'name',
+        'description',
+        'image',
+        'price',
+        'unit_of_price',
+        'categories',
+    ];
 
     public const IMAGES_FOLDER = '/products';
 
@@ -217,7 +229,29 @@ class Product extends Model
         return $query;
     }
 
-    public function getImageUrl() {
+    public static function listPaginatedByProducer(int $producerId, string $search = '', int $page = 1, int $perPage = 0): LengthAwarePaginator
+    {
+        if (!$perPage) {
+            $perPage = config('models.pagination_defaul_per_page');
+        }
+
+        return self::where('producer_id', $producerId)
+            ->where(function ($query) use ($search) {
+                if (!$search) {
+                    return true;
+                }
+
+                $query->whereSearch($search);
+                if (is_numeric($search)) {
+                    $query->orWhere('id', (int) $search);
+                }
+            })
+            ->orderBy('id', 'DESC')
+            ->paginate(perPage: $perPage, page: $page);
+    }
+
+    public function getImageUrl(): ?string
+    {
         if(!$this->image) {
             return null;
         }
@@ -226,7 +260,20 @@ class Product extends Model
             return $this->image;
         }
 
-        return asset('storage' .  self::IMAGES_FOLDER . '/' . $this->image);
+        return asset('storage' .  $this->getImagePath());
+    }
+
+    public function getImagePath(): ?string
+    {
+        if(!$this->image) {
+            return null;
+        }
+
+        if (filter_var($this->image, FILTER_VALIDATE_URL)) {
+            return null;
+        }
+
+        return self::IMAGES_FOLDER . '/' . $this->image;
     }
 
     public static function getBestRated(int $limit) {

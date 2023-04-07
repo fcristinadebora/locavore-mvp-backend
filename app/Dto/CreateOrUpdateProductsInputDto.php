@@ -16,6 +16,8 @@ final class CreateOrUpdateProductsInputDto extends DataTransferObject
 {
     use FromRequestTrait;
 
+    public ?bool $is_active = null;
+    public ?bool $delete_image = false;
     public ?string $name = null;
     public ?string $description = null;
     public ?UploadedFile $image = null;

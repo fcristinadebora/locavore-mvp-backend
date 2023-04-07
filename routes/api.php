@@ -77,14 +77,11 @@ Route::middleware('auth.apikey')->group(function () {
         Route::post('/account/producer/profile-picture', [ProducerManagementController::class, 'updateProfilePicture']);
         Route::post('/account/producer/contacts/replace', [ProducerManagementController::class, 'replaceContacts']);
 
+        Route::get('/account/producer/products', [ProductsManagementController::class, 'list']);
+        Route::get('/account/producer/products/{product}', [ProductsManagementController::class, 'getById']);
         Route::post('/account/producer/products', [ProductsManagementController::class, 'create']);
-        // Producer quiz
-        // Route::post('/quiz') //Update quiz step
-        // Route::post('categories/custom') //create custom category
-        // Route::put('producer/categories') //set producer categories
-        // Route::put('producer') //Update producer different fields
-        // Route::put('producer/address') // Update producer address
-        // Route::put('producer/contacts') // Update producer address
+        Route::put('/account/producer/products/{product}', [ProductsManagementController::class, 'update']);
+        Route::delete('/account/producer/products/{product}', [ProductsManagementController::class, 'delete']);
     });
 });
 

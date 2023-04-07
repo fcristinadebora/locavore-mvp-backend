@@ -40,11 +40,10 @@ class ProducerManagementService
         if (in_array($key, $producer->fillable ?? []) && !is_array($value)) {
           $producer->$key = $value;
         }
-                
-        $producer->categories()->sync($dto->categories);
       }
       
       $producer->save();
+      $producer->categories()->sync($dto->categories);
     
     return $producer;
   }
@@ -108,8 +107,17 @@ class ProducerManagementService
   {
     $currentUser = $this->getCurrentUserOrFail();
     
-    return $currentUser->person->producer ?? null;
+    return $currentUser->person->producer ?? null; 
+  }
+
+  public function getCurrentProducerOrFail(): ?Producer
+  {
+    $producer = $this->getCurrentProducer();
+    if (!$producer) {
+      throw new UnauthorizedException('Producer does not exists', 401);
+    }
     
+    return $producer; 
   }
 
   public function getCurrentProducerOrNew(): Producer

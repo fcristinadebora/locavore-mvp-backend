@@ -22,4 +22,24 @@ class ContactManagementController extends BaseApiController
     public function __construct()
     {
     }
+
+    public function list() {
+
+    }
+
+    public function findById () {
+
+    }
+
+    public function create () {
+
+    }
+
+    public function update () {
+
+    }
+
+    public function delete () {
+        
+    }
 }
