@@ -199,7 +199,7 @@ class Product extends Model
         bool $onlyFavorites = false
     ): Builder
     {
-        $query = self::whereSearch($search);
+        $query = self::whereSearch($search)->where('is_active', true);
 
         if ($coordinates) {
             $query->withDistance($coordinates)
@@ -278,6 +278,7 @@ class Product extends Model
 
     public static function getBestRated(int $limit) {
         return self::withAvg('reviews', 'rate')
+            ->where('is_active', true)
             ->withCount('reviews')
             ->limit($limit)
             ->orderBy('reviews_avg_rate', 'DESC')

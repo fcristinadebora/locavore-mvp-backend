@@ -201,7 +201,7 @@ class Producer extends Model
         bool $onlyFavorites = false
     ): Builder
     {
-        $query = self::whereSearch($search);
+        $query = self::whereSearch($search)->where('is_enabled', true);
         
         if ($coordinates) {
             $query->withDistance($coordinates)
@@ -255,6 +255,7 @@ class Producer extends Model
 
     public static function getBestRated(int $limit) {
         return self::withAvg('reviews', 'rate')
+            ->where('is_enabled', true)
             ->withCount('reviews')
             ->limit($limit)
             ->orderBy('reviews_avg_rate', 'DESC')
