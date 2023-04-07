@@ -8,6 +8,8 @@ use App\Http\Requests\UpdateQuizRequest;
 use App\Http\Services\ProducerManagementService;
 use App\Http\Services\QuizManagementService;
 use App\Models\Quiz;
+use Illuminate\Http\Client\Request;
+use Illuminate\Http\Request as HttpRequest;
 
 class QuizesManagementController extends BaseApiController
 {
@@ -16,11 +18,14 @@ class QuizesManagementController extends BaseApiController
         private ProducerManagementService $producerService
     ) {}
 
-    public function list() {
-        $this->producerService->getCurrentProducerOrFail();
+    public function list(HttpRequest $request) {
+        $perPage = $request->input('per_page') ?? 0;
+        $page = $request->input('page') ?? 1;
+        $search = $request->input('search') ?? '';
+        
         return $this->sendResponse([
             'success' => true,
-            'data' => $this->quizService->list()
+            'data' => $this->quizService->list($search, $page, $perPage)
         ]);
     }
 

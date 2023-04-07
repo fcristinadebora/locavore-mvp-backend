@@ -23,6 +23,7 @@ class QuizManagementService
   {
     $producer = $this->producerService->getCurrentUserOrFail();
     
+    
     return Quiz::listPaginatedByProducer($producer->id, $search, $page, $perPage);
   }
 
