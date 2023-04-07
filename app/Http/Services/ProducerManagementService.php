@@ -2,10 +2,14 @@
 
 namespace App\Http\Services;
 
+use App\Dto\ProducerReplaceContactsInputDto;
 use App\Dto\UpdateProducerAddressInputDto;
 use App\Dto\UpdateProducerInputDto;
+use App\Http\Services\Traits\PrivateServiceTrait;
 use App\Models\Address;
+use App\Models\Contact;
 use App\Models\Producer;
+use App\Models\ProducerContact;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\UploadedFile;
@@ -16,6 +20,8 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class ProducerManagementService
 {
+  use PrivateServiceTrait;
+
   public function __construct(
     private AuthService $authService,
     private FileService $fileService
@@ -23,12 +29,12 @@ class ProducerManagementService
 
   public function createOrUpdateProducer(UpdateProducerInputDto $dto): Producer
   {
-    $producer = $this->getCurrentProducer(true);
+    $producer = $this->getCurrentProducerOrNew(true);
 
     foreach ($dto as $key => $value) {
         // Skip null values
         if ($value === null) {
-            continue;
+          continue;
         }
 
         if (in_array($key, $producer->fillable ?? []) && !is_array($value)) {
@@ -73,7 +79,7 @@ class ProducerManagementService
 
   public function updateProfilePicture(?UploadedFile $file, ?bool $deleteCurrent = false): ?Producer
   {
-    $producer = $this->getCurrentProducer(true);
+    $producer = $this->getCurrentProducer();
     if (!$file && $deleteCurrent) {
       //todo delete the current one with the upload service
       $producer->profile_picture = null;
@@ -98,19 +104,43 @@ class ProducerManagementService
     return $producer;
   }
 
-  private function getCurrentProducer(bool $createNewIfEmpty = false)
+  public function getCurrentProducer(): ?Producer
   {
-    $currentUser = Auth::user();
-    if (!($currentUser && $currentUser->person)) {
-        throw new UnauthorizedException('User not authenticated', 401);
-    }
+    $currentUser = $this->getCurrentUserOrFail();
     
-    $producer = $currentUser->person->producer;
+    return $currentUser->person->producer ?? null;
+    
+  }
+
+  public function getCurrentProducerOrNew(): Producer
+  {
+    $currentUser = $this->getCurrentUserOrFail();
+    $producer = $this->getCurrentProducer();
+
     if (!$producer) {
-        $producer = new Producer;
-        $producer->person_id = $currentUser->person->id;
+      $producer = new Producer;
+      $producer->person_id = $currentUser->person->id;
     }
 
     return $producer;
+  }
+
+  public function replaceContacts(ProducerReplaceContactsInputDto $dto): array
+  {
+    $producer = $this->getCurrentProducer();
+
+    $createdContacts = [];
+    $producer->contacts()->delete();
+    foreach ($dto->contacts as $key => $value) {
+      $contact = new ProducerContact([
+        'producer_id' => $producer->id,
+        'type' => $value->type,
+        'value' => $value->value,
+      ]);
+      $contact->save();
+      $createdContacts[] = clone $contact;
+    }
+
+    return $createdContacts;
   }
 }

@@ -27,9 +27,7 @@ class AuthService
 
     $person = $this->personService->createPerson($user->id);
 
-    if ($dto->type == UserType::PRODUCER || $dto->type == UserType::PRODUCER_AND_CONSUMER) {
-      $this->producerService->createProducer($person->id, $dto->name);
-    }
+    $this->producerService->createProducer($person->id, '');
 
     return [
       'name' => $user->name,
@@ -72,6 +70,17 @@ class AuthService
     $user->person = $user->person;
 
     return $user ?? null;
+  }
+
+  public function getCurrentUserOrFail(\Throwable $exception): User|null
+  {
+    $user = $this->getCurrentUser();
+
+    if (!$user) {
+      throw new $exception;
+    }
+
+    return $user;
   }
 
   public function updatePassword(string $oldPassword, string $newPassword): bool

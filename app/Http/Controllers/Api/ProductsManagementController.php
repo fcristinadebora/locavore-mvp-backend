@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Dto\CreateOrUpdateProductsInputDto;
 use App\Dto\ListProductsInputDto;
+use App\Http\Requests\CreateOrUpdateProuctRequest;
 use App\Http\Requests\ListProductsRequest;
 use Illuminate\Http\Request;
 use App\Http\Services\ProductService;
@@ -21,5 +23,11 @@ class ProductsManagementController extends BaseApiController
 
     public function __construct()
     {
+    }
+
+    public function create(CreateOrUpdateProuctRequest $request)
+    {        
+        $dto = CreateOrUpdateProductsInputDto::fromRequest($request);
+        dd($dto);
     }
 }

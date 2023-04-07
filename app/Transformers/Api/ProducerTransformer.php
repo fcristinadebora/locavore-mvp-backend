@@ -26,6 +26,7 @@ class ProducerTransformer extends TransformerAbstract
      */
     protected array $availableIncludes = [
         'longDescription',
+        'long_description',
         'address',
         'categories',
         'contacts',

@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\FavoritesController;
 use App\Http\Controllers\Api\ProducerManagementController;
 use App\Http\Controllers\Api\ProducersController;
 use App\Http\Controllers\Api\ProductsController;
+use App\Http\Controllers\Api\ProductsManagementController;
 use App\Http\Controllers\Api\ProfileManagementController;
 use App\Http\Controllers\Api\ReviewsController;
 
@@ -70,9 +71,13 @@ Route::middleware('auth.apikey')->group(function () {
         Route::put('/account/password', [ProfileManagementController::class, 'updatePassword']);
         Route::delete('/account', [ProfileManagementController::class, 'deleteAccount']);
 
+        Route::get('/account/producer', [ProducerManagementController::class, 'getCurrentProducer']);
         Route::put('/account/producer', [ProducerManagementController::class, 'updateProducer']);
         Route::put('/account/producer/address', [ProducerManagementController::class, 'updateAddress']);
         Route::post('/account/producer/profile-picture', [ProducerManagementController::class, 'updateProfilePicture']);
+        Route::post('/account/producer/contacts/replace', [ProducerManagementController::class, 'replaceContacts']);
+
+        Route::post('/account/producer/products', [ProductsManagementController::class, 'create']);
         // Producer quiz
         // Route::post('/quiz') //Update quiz step
         // Route::post('categories/custom') //create custom category

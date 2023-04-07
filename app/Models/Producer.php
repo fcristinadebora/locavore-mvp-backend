@@ -227,7 +227,7 @@ class Producer extends Model
         return $query;
     }
 
-    public function getProfilePictureUrl(): string
+    public function getProfilePictureUrl(): ?string
     {
         if(!$this->profile_picture) {
             return null;

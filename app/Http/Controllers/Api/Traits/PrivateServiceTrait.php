@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Traits;
 
-use App\Dto\ProducerReplaceContactsInputDto;
 use App\Dto\UpdateProducerAddressInputDto;
 use App\Dto\UpdateProducerInputDto;
 use App\Http\Requests\DeleteAccountRequest;
-use App\Http\Requests\ProducerReplaceContactsRequest;
 use App\Http\Requests\UpdatePasswordRequest;
 use App\Http\Requests\UpdateProducerAddressRequest;
 use App\Http\Requests\UpdateProducerProfilePictureRequest;
@@ -66,16 +64,6 @@ class ProducerManagementController extends BaseApiController
                 $this->producerManagementService->updateProfilePicture(file: $file ?? null, deleteCurrent: $deleteCurrent ?? false),
                 new ProducerTransformer()
             )
-        ]);
-    }
-
-    public function replaceContacts(ProducerReplaceContactsRequest $request)
-    {
-        $dto = ProducerReplaceContactsInputDto::fromRequest($request);
-        
-        return $this->sendResponse([
-            'success' => true,
-            'address' => $this->producerManagementService->replaceContacts($dto)
         ]);
     }
 }
