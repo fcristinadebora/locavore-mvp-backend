@@ -23,6 +23,7 @@ class Producer extends Model
 
     public $fillable = [
         'person_id',
+        'quiz_id',
         'name',
         'is_enabled',
         'name',

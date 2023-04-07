@@ -20,14 +20,14 @@ class ProductManagementService
 
   public function list(string $search = '', int $page = 1, int $perPage = 0): LengthAwarePaginator
   {
-    $producer = $this->producerService->getCurrentUserOrFail();
+    $producer = $this->producerService->getCurrentProducerOrFail();
     
     return Product::listPaginatedByProducer($producer->id, $search, $page, $perPage);
   }
 
   public function create(CreateOrUpdateProductsInputDto $dto): ?Product
   {
-    $producer = $this->producerService->getCurrentUserOrFail();
+    $producer = $this->producerService->getCurrentProducerOrFail();
 
     $product = new Product();
     $product->producer_id = $producer->id;
@@ -57,7 +57,7 @@ class ProductManagementService
 
   public function update(Product $product, CreateOrUpdateProductsInputDto $dto): Product
   {
-    $this->producerService->getCurrentUserOrFail();
+    $this->producerService->getCurrentProducerOrFail();
     
     $oldImagePath = null;
     if ($dto->image) {
@@ -93,7 +93,7 @@ class ProductManagementService
 
   public function delete(Product $product): bool
   {
-    $this->producerService->getCurrentUserOrFail();
+    $this->producerService->getCurrentProducerOrFail();
     
     $oldImagePath = $product->getImagePath();
 

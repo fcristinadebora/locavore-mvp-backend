@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Collection as SupportCollection;
 
 class Quiz extends Model
 {
@@ -28,6 +32,17 @@ class Quiz extends Model
             $perPage = config('models.pagination_defaul_per_page');
         }
 
+        return self::getFromProducerFilters($producerId, $search)
+            ->paginate(perPage: $perPage, page: $page);
+    }
+
+    public static function listByProducer(int $producerId, string $search = ''): SupportCollection
+    {
+        return  self::getFromProducerFilters($producerId, $search)->get();
+    }
+
+    public static function getFromProducerFilters(int $producerId, string $search = ''): Builder
+    {
         return self::where('producer_id', $producerId)
             ->where(function ($query) use ($search) {
                 if (!$search) {
@@ -41,7 +56,6 @@ class Quiz extends Model
                 }
             })
             ->with('questions')
-            ->orderBy('id', 'DESC')
-            ->paginate(perPage: $perPage, page: $page);
+            ->orderBy('id', 'DESC');
     }
 }

@@ -22,10 +22,16 @@ class QuizesManagementController extends BaseApiController
         $perPage = $request->input('per_page') ?? 0;
         $page = $request->input('page') ?? 1;
         $search = $request->input('search') ?? '';
+        $paginate = $request->input('paginate') !== null ? $request->input('paginate') : 1;
         
+        if ($paginate) {
+            $data = $this->quizService->listPaginated($search, $page, $perPage);
+        } else {
+            $data = $this->quizService->list($search);
+        }
         return $this->sendResponse([
             'success' => true,
-            'data' => $this->quizService->list($search, $page, $perPage)
+            'data' => $data
         ]);
     }
 

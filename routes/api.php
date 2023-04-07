@@ -49,7 +49,7 @@ Route::middleware('auth.apikey')->group(function () {
     Route::get('/products/{product}/reviews', [ReviewsController::class, 'listProductReviews']);
     Route::get('/producers/{producer}/reviews', [ReviewsController::class, 'listProducerReviews']);
 
-    
+    Route::get('/quizes/{quiz}', [QuizesManagementController::class, 'getById']);    
     
     Route::get('/categories', [CategoriesController::class, 'getAll']);
 
@@ -86,7 +86,6 @@ Route::middleware('auth.apikey')->group(function () {
 
         Route::get('/account/producer/quizes', [QuizesManagementController::class, 'list']);
         Route::post('/account/producer/quizes', [QuizesManagementController::class, 'create']);
-        Route::get('/account/producer/quizes/{quiz}', [QuizesManagementController::class, 'getById']);
         Route::put('/account/producer/quizes/{quiz}', [QuizesManagementController::class, 'update']);
         Route::delete('/account/producer/quizes/{quiz}', [QuizesManagementController::class, 'delete']);
     });

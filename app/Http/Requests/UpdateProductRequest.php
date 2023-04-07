@@ -28,6 +28,7 @@ class UpdateProductRequest extends FormRequest
             'delete_image' => 'nullable|boolean',
             'name' => 'nullable|string',
             'description' => 'nullable|string',
+            'quiz_id' => 'nullable|numeric|exists:quizzes,id',
             'image' => 'nullable|image',
             'price' => "nullable|numeric",
             'unit_of_price' => "nullable|string",

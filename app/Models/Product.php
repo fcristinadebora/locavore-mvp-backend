@@ -21,6 +21,7 @@ class Product extends Model
 
     public $fillable = [
         'is_active',
+        'quiz_id',
         'producer_id',
         'name',
         'description',
@@ -199,7 +200,10 @@ class Product extends Model
         bool $onlyFavorites = false
     ): Builder
     {
-        $query = self::whereSearch($search)->where('is_active', true);
+        $query = self::whereSearch($search)->where('is_active', true)
+            ->whereHas('producer', function ($query) {
+                $query->where('is_enabled', true);
+            });
 
         if ($coordinates) {
             $query->withDistance($coordinates)

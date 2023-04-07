@@ -30,6 +30,7 @@ class CreateProductRequest extends FormRequest
             'image' => 'nullable|image',
             'price' => "nullable|numeric",
             'unit_of_price' => "nullable|string",
+            'quiz_id' => 'nullable|numeric|exists:quizzes,id',
             'categories' => 'nullable|array',
             'categories.*' => 'required|numeric|exists:categories,id'
         ];

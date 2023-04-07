@@ -53,7 +53,8 @@ class ProductTransformer extends TransformerAbstract
             'image' => $product->getImageUrl(),
             'price' => round($product->price, 2),
             'description' => $product->description,
-            'unit_of_price' => $product->unit_of_price
+            'unit_of_price' => $product->unit_of_price,
+            'quiz_id' => $product->quiz_id
         ];
     }
 

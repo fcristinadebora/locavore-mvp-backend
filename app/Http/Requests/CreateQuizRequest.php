@@ -26,17 +26,17 @@ class CreateQuizRequest extends FormRequest
     public function rules()
     {
         return [
-            'is_active' => 'sometimes|boolean',
+            'is_active' => 'nullable|boolean',
             'name' => "required|string",
-            'questions' => 'sometimes|array',
+            'questions' => 'nullable|array',
             'questions.*.type' => [
-                'required',
+                'nullable',
                 new Enum(QuestionType::class)
             ],
-            'questions.*.question' => 'required|string',
-            'questions.*.order' => 'sometimes|numeric',
-            'questions.*.options' => 'sometimes|array',
-            'questions.*.options.*' => 'required|string'
+            'questions.*.question' => 'nullable|string',
+            'questions.*.order' => 'nullable|numeric',
+            'questions.*.options' => 'nullable|array',
+            'questions.*.options.*' => 'nullable|string'
         ];
     }
 }

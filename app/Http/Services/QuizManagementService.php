@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\Question;
 use App\Models\Quiz;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class QuizManagementService
 {
@@ -19,12 +20,18 @@ class QuizManagementService
     private ProducerManagementService $producerService
   ) { }
 
-  public function list(string $search = '', int $page = 1, int $perPage = 0): LengthAwarePaginator
+  public function listPaginated(string $search = '', int $page = 1, int $perPage = 0): LengthAwarePaginator
   {
     $producer = $this->producerService->getCurrentUserOrFail();
     
-    
     return Quiz::listPaginatedByProducer($producer->id, $search, $page, $perPage);
+  }
+
+  public function list(string $search = ''): Collection
+  {
+    $producer = $this->producerService->getCurrentUserOrFail();
+    
+    return Quiz::listByProducer($producer->id, $search);
   }
 
   public function create(QuizDto $dto): ?Quiz
