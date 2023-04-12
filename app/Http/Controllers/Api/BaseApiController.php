@@ -14,12 +14,11 @@ class BaseApiController extends Controller
      */
     public function sendResponse($result, $message = '')
     {
-    	$response = [
+        $response = [
             'success' => true,
-            'data'    => $result,
             'message' => $message,
+            'data' => $result,
         ];
-
 
         return response()->json($response, 200);
     }
@@ -30,19 +29,20 @@ class BaseApiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function sendError($error, $code = 500, $errorMessages = [])
+    public function sendError(string $error, int $httpCode = 500, string $errorCode = '', $errorDetails = [])
     {
     	$response = [
             'success' => false,
             'message' => $error,
+            'code' => $errorCode,
         ];
 
 
-        if(!empty($errorMessages)){
-            $response['data'] = $errorMessages;
+        if(!empty($errorDetails)){
+            $response['data'] = $errorDetails;
         }
 
 
-        return response()->json($response, $code);
+        return response()->json($response, $httpCode);
     }
 }

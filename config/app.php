@@ -186,6 +186,7 @@ return [
          * Package Service Providers...
          */
         Ejarnutowski\LaravelApiKey\Providers\ApiKeyServiceProvider::class,
+        App\Providers\FakerServiceProvider::class,
 
         /*
          * Application Service Providers...
