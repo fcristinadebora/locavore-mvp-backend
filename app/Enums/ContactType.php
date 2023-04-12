@@ -9,6 +9,8 @@ enum ContactType:string {
     case PHONE = 'phone';
     case EMAIL = 'email';
     case INSTAGRAM = 'instagram';
+    case FACEBOOK = 'facebook';
+    case WEBSITE = 'website';
 
     public static function getLabel(string $value, string $language = ''): string {
         if (!$language) {
@@ -21,6 +23,8 @@ enum ContactType:string {
                 self::PHONE->value => 'Telefone',
                 self::EMAIL->value => 'E-mail',
                 self::INSTAGRAM->value => 'Instagram',
+                self::FACEBOOK->value => 'Facebook',
+                self::WEBSITE->value => 'Website',
                 default => 'unknown'
             };
         }        

@@ -12,6 +12,7 @@ class ProducerService
     public function createProducer(int $personId, string $name): Producer
     {
         return Producer::create([
+            'is_active' => true,
             'person_id' => $personId,
             'name' => $name
         ]);
@@ -28,7 +29,8 @@ class ProducerService
             categories: $dto->categoryIds,
             currentPage: $dto->pagination->currentPage,
             excludeIds: $dto->excludeIds,
-            maxDistance: $dto->maxDistance
+            maxDistance: $dto->maxDistance,
+            onlyFavorites: $dto->onlyFavorites
         );
     }
 
@@ -42,7 +44,14 @@ class ProducerService
             categories: $dto->categoryIds,
             limit: $dto->limit,
             excludeIds: $dto->excludeIds,
-            maxDistance: $dto->maxDistance
+            maxDistance: $dto->maxDistance,
+            onlyFavorites: $dto->onlyFavorites
         );
+    }
+
+
+    public function getBestRated(int $limit): Collection
+    {
+        return Producer::getBestRated($limit ?? 0);
     }
 }

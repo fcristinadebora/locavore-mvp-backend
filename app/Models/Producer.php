@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\ModelEventLogger;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -16,11 +17,19 @@ use MatanYadaev\EloquentSpatial\Objects\Point;
 
 class Producer extends Model
 {
-    use HasFactory;
+    use HasFactory, ModelEventLogger;
 
-    protected $fillable = [
+    protected static $recordEvents = ['updated'];
+
+    public $fillable = [
         'person_id',
-        'name'
+        'quiz_id',
+        'name',
+        'is_enabled',
+        'name',
+        'short_description',
+        'long_description',
+        'categories',
     ];
 
     public const IMAGES_FOLDER = '/producers';
@@ -54,6 +63,33 @@ class Producer extends Model
         return $this->belongsToMany(Category::class, 'category_producers');
     }
 
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(PersonFavoriteProducer::class);
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(ProducerReview::class);
+    }
+
+    public function averageReview()
+    {
+        return $this->reviews()
+            ->selectRaw("avg(rate) as rate, producer_id")
+            ->groupBy('producer_id');
+    }
+
+    public function getAverageReviewAttribute()
+    {
+        if ( ! array_key_exists('averageReview', $this->relations)) {
+            $this->load('averageReview');
+        }
+
+        $relation = $this->getRelation('averageReview')->first();
+
+        return ($relation) ? round($relation->rate, 2) : null;
+    }
     // ==================================
     // ========== Scope functions =======
     // ==================================
@@ -103,6 +139,20 @@ class Producer extends Model
         return $query->whereNotIn('id', $excludeIds);
     }
 
+    public function scopeWhereIsFavorite(Builder $query): Builder
+    {
+        // TODO improve this later
+        $user = auth('api')->user();
+
+        if (!$user) {
+            return $query->whereRaw("false");
+        }
+        
+        return $query->whereHas('favorites', function ($query) use ($user) {
+            return $query->where('person_id', $user->person->id);
+        });
+    }
+
     // ===========================================
     // ========== Business rules functions =======
     // ===========================================
@@ -114,14 +164,15 @@ class Producer extends Model
         int $currentPage = 1,
         int $perPage = 0,
         array $excludeIds = [],
-        int $maxDistance = 0
+        int $maxDistance = 0,
+        bool $onlyFavorites = false
     ): LengthAwarePaginator
     {
         if (!$perPage) {
             $perPage = config('models.pagination_defaul_per_page');
         }
 
-        return self::getFromFilters($coordinates, $search, $categories, $excludeIds, $maxDistance)->paginate(perPage: $perPage, page: $currentPage);
+        return self::getFromFilters($coordinates, $search, $categories, $excludeIds, $maxDistance, $onlyFavorites)->paginate(perPage: $perPage, page: $currentPage);
     }
 
     public static function List(
@@ -130,14 +181,15 @@ class Producer extends Model
         array $categories = [], 
         int $limit = 0,
         array $excludeIds = [],
-        int $maxDistance = 0
+        int $maxDistance = 0,
+        bool $onlyFavorites = false
     ): Collection
     {
         if (!$limit) {
             $limit = config('models.list_default_max_items');
         }
 
-        return self::getFromFilters($coordinates, $search, $categories, $excludeIds, $maxDistance)->limit($limit)->get();
+        return self::getFromFilters($coordinates, $search, $categories, $excludeIds, $maxDistance, $onlyFavorites)->limit($limit)->get();
     }
 
 
@@ -146,10 +198,11 @@ class Producer extends Model
         string $search = "",
         array $categories = [],
         array $excludeIds = [],
-        int $maxDistance = 0
+        int $maxDistance = 0,
+        bool $onlyFavorites = false
     ): Builder
     {
-        $query = self::whereSearch($search);
+        $query = self::whereSearch($search)->where('is_enabled', true);
         
         if ($coordinates) {
             $query->withDistance($coordinates)
@@ -168,10 +221,15 @@ class Producer extends Model
             $query->whereMaxDistance($coordinates, $maxDistance);
         }
 
+        if ($onlyFavorites) {
+            $query->whereIsFavorite();
+        }
+
         return $query;
     }
 
-    public function getProfilePictureUrl() {
+    public function getProfilePictureUrl(): ?string
+    {
         if(!$this->profile_picture) {
             return null;
         }
@@ -180,6 +238,31 @@ class Producer extends Model
             return $this->profile_picture;
         }
 
-        return asset('storage' .  self::IMAGES_FOLDER . '/' . $this->profile_picture);
+        return asset('storage' .  $this->getProfilePicturePath());
+    }
+
+    public function getProfilePicturePath(): ?string
+    {
+        if(!$this->profile_picture) {
+            return null;
+        }
+
+        if (filter_var($this->profile_picture, FILTER_VALIDATE_URL)) {
+            return null;
+        }
+
+        return self::IMAGES_FOLDER . '/' . $this->profile_picture;
+    }
+
+    public static function getBestRated(int $limit) {
+        return self::withAvg('reviews', 'rate')
+            ->where('is_enabled', true)
+            ->withCount('reviews')
+            ->limit($limit)
+            ->orderBy('reviews_avg_rate', 'DESC')
+            ->orderBy('reviews_count', 'DESC')
+            ->inRandomOrder()
+            ->inRandomOrder()
+            ->get();
     }
 }

@@ -5,6 +5,7 @@ namespace App\Transformers\Api;
 use App\Enums\Availability;
 use App\Models\Address;
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
 use League\Fractal\ParamBag;
 use League\Fractal\Resource\Collection;
 use League\Fractal\TransformerAbstract;
@@ -33,7 +34,9 @@ class ProductTransformer extends TransformerAbstract
         'address',
         'availability',
         'categories',
-        'producer'
+        'producer',
+        'is_current_user_favorite',
+        'average_review'
     ];
     
     /**
@@ -45,12 +48,13 @@ class ProductTransformer extends TransformerAbstract
     {
         return [
             'id' => $product->id,
-            'product_id' => $product->producer_id,
+            'producer_id' => $product->producer_id,
             'name' => $product->name,
             'image' => $product->getImageUrl(),
             'price' => round($product->price, 2),
             'description' => $product->description,
-            'unit_of_price' => $product->unit_of_price
+            'unit_of_price' => $product->unit_of_price,
+            'quiz_id' => $product->quiz_id
         ];
     }
 
@@ -61,7 +65,7 @@ class ProductTransformer extends TransformerAbstract
 
     public function includeAvailability(Product $product)
     {
-        return $this->Primitive($product->availability, function ($availabilityCollection) {
+        return new Primitive($product->availability, function ($availabilityCollection) {
             return $availabilityCollection->toArray();
         });
     }
@@ -70,7 +74,16 @@ class ProductTransformer extends TransformerAbstract
     {
         $categories = collect($product->categories)->transformWith(new CategoryTransformer())->toArray()['data'];
 
-        return $this->Primitive($categories);
+        return new Primitive($categories);
+    }
+
+    public function includeAverageReview(Product $product)
+    {
+        if ($product->reviews_avg_rate) {
+            return new Primitive((float) $product->reviews_avg_rate);
+        }
+
+        return new Primitive($product->averageReview);
     }
 
     public function includeAddress(Product $product): ?Item

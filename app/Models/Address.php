@@ -15,6 +15,15 @@ class Address extends Model
 {
     use HasFactory, HasSpatial;
 
+    public $fillable = [
+        'city_id',
+        'lat',
+        'lng',
+        'location',
+        'address',
+        'producer_id'
+    ];
+
     protected $casts = [
         'location' => Point::class
     ];
