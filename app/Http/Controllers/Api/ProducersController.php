@@ -43,7 +43,7 @@ class ProducersController extends BaseApiController
         $coordinates = $this->getCoordinatesFromRequest($request);
         if ($coordinates) {
             $address = $producer->address;
-            $producer->address = $address->loadDistance($coordinates);
+            $producer->address = $address ? $address->loadDistance($coordinates) : null;
         }
 
         $producer = fractal($producer, ProducerTransformer::class)

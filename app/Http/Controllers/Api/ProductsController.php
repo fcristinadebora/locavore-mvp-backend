@@ -48,7 +48,7 @@ class ProductsController extends BaseApiController
         if  ($request->get('lat') && $request->get('lng')) {
             $coordinates = new Point($request->get('lat'), $request->get('lng'), config('spatial.default_srid'));
             $address = $product->producer->address;
-            $product->producer->address = $address->loadDistance($coordinates);
+            $product->producer->address = $address ? $address->loadDistance($coordinates) : null;
         }
 
         $product = fractal($product, ProductTransformer::class)
