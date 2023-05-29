@@ -30,7 +30,7 @@ class ProducerTransformer extends TransformerAbstract
         'address',
         'categories',
         'contacts',
-        'average_review'
+        'average_review',
     ];
     
     /**
@@ -45,6 +45,8 @@ class ProducerTransformer extends TransformerAbstract
             'name' => $producer->name,
             'short_description' => $producer->short_description,
             'profile_picture' => $producer->getProfilePictureUrl(),
+            'is_enabled' => $producer->is_enabled,
+            'is_complete' => $producer->isComplete()
         ];
     }
 

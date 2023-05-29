@@ -30,9 +30,16 @@ class Producer extends Model
         'short_description',
         'long_description',
         'categories',
+        'profile_picture'
     ];
 
     public const IMAGES_FOLDER = '/producers';
+
+    public function isComplete () {
+        $hasAddress = $this->address && $this->address->location && $this->address->address;
+        return $hasAddress
+            && $this->name;
+    }
 
     // ============================
     // ========== Relations =======
@@ -153,6 +160,20 @@ class Producer extends Model
         });
     }
 
+    public function scopeWhereComplete(Builder $query): Builder
+    {
+        return $query->whereNotNull('name')
+            ->whereHas('address', function ($query) {
+                $query->whereRaw('LENGTH(address) > 0')
+                    ->whereNotNull('location');
+            });
+    }
+
+    public function scopeWhereEnabled(Builder $query): Builder
+    {
+        return $query->where('is_enabled', true);
+    }
+
     // ===========================================
     // ========== Business rules functions =======
     // ===========================================
@@ -202,7 +223,7 @@ class Producer extends Model
         bool $onlyFavorites = false
     ): Builder
     {
-        $query = self::whereSearch($search)->where('is_enabled', true);
+        $query = self::whereComplete()->whereSearch($search)->whereEnabled();
         
         if ($coordinates) {
             $query->withDistance($coordinates)

@@ -202,7 +202,8 @@ class Product extends Model
     {
         $query = self::whereSearch($search)->where('is_active', true)
             ->whereHas('producer', function ($query) {
-                $query->where('is_enabled', true);
+                $query->where('is_enabled', true)
+                    ->whereComplete();
             });
 
         if ($coordinates) {

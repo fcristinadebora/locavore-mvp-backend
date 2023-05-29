@@ -52,6 +52,14 @@ class Address extends Model
         );
     }
 
+    public static function subqueryOrderByLocation(Point $coordinates, array $whereColumn): Builder
+    {
+        return self::selectDistance($coordinates)
+            ->orderBy("distance")
+            ->whereColumn($whereColumn['local'], $whereColumn['parent'])
+            ->limit(1);
+    }
+
     public static function searchByLocation($lat, $lng)
     {
         $searchLocation = new Point($lat, $lng, 4326);
@@ -63,39 +71,6 @@ class Address extends Model
             ->withDistance('location', $searchLocation)
             ->with('city')
             ->orderByDistance('location', $searchLocation, 'asc');
-    }
-
-    public static function searchProductsByLocation($lat, $lng, $searchString = '', $perPage = 15, $currentPage = 1)
-    {
-        return self::searchByLocation($lat, $lng)
-            ->with('producer.products', function ($query) use ($searchString) {
-                $query->search($searchString);
-            })
-            ->whereHas('producer.products', function ($query) use ($searchString) {
-                $query->search($searchString);
-            })
-            ->paginate(perPage: $perPage, page: $currentPage);
-    }
-
-    public static function searchProducersByLocation($lat, $lng, $searchString = '', $perPage = 15, $currentPage = 1)
-    {
-        $query = self::searchByLocation($lat, $lng)
-            ->with('producer', function ($query) use ($searchString) {
-                $query->search($searchString);
-            })
-            ->whereHas('producer', function ($query) use ($searchString) {
-                $query->search($searchString);
-            });
-
-        return $query->paginate(perPage: $perPage, page: $currentPage);
-    }
-
-    public static function subqueryOrderByLocation(Point $coordinates, array $whereColumn): Builder
-    {
-        return self::selectDistance($coordinates)
-            ->orderBy("distance")
-            ->whereColumn($whereColumn['local'], $whereColumn['parent'])
-            ->limit(1);
     }
 
     public function loadDistance (Point $coordinates) {

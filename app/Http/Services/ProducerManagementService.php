@@ -43,6 +43,7 @@ class ProducerManagementService
       }
       
       $producer->save();
+      // todo@fcristinadebora is this always deleting the categories?
       $producer->categories()->sync($dto->categories);
     
     return $producer;
