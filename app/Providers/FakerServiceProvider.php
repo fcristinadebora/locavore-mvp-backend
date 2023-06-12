@@ -17,7 +17,7 @@ class FakerServiceProvider extends ServiceProvider
     {
         $this->app->singleton(Generator::class, function () {
             $faker = Factory::create();
-            $faker->addProvider(new Faker\Provider\pt_BR\Company($faker));
+            $faker->addProvider(new \Faker\Provider\pt_BR\Company($faker));
             return $faker;
         });
     }

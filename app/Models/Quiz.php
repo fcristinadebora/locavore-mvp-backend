@@ -23,7 +23,7 @@ class Quiz extends Model
 
     public function questions(): HasMany
     {
-        return $this->HasMany(Question::class);
+        return $this->HasMany(Question::class)->orderBy('order', 'asc');
     }
 
     public static function listPaginatedByProducer(int $producerId, string $search = '', int $page = 1, int $perPage = 0): LengthAwarePaginator
