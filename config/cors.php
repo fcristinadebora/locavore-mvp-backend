@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => [$_ENV["CORS_ALLOWED_ORIGINS"]],
 
     'allowed_origins_patterns' => [],
 
