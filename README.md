@@ -10,11 +10,10 @@ cp .env.example .env
 composer install
 ````
 
-3. Setup security to be able to consume the API
+3. Setup passport
 ```sh
 php artisan passport:install && \
-php artisan key:generate && \
-php artisan apikey:generate apikeyname
+php artisan key:generate &&
 ```
 
 4. Start development containers
@@ -22,7 +21,12 @@ php artisan apikey:generate apikeyname
 make sail_start
 ```
 
-5. Run migrations
+5. Generate Api Key to be able to consume backend
+```sh
+make apikey_generate name=apiKeyName
+``` 
+
+6. Run migrations
 ```sh
 make migrate
 ```
