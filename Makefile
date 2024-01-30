@@ -24,3 +24,9 @@ seed_class:
 
 passport_install:
 	docker exec locavore-mvp-backend-laravel.test-1 php artisan passport:install
+
+initial_seed:
+	docker exec locavore-mvp-backend-laravel.test-1 php artisan db:seed
+
+fake_seed:
+	docker exec locavore-mvp-backend-laravel.test-1 php artisan db:seed --class=FakeDatabaseSeeder
