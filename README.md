@@ -23,7 +23,7 @@ make sail_start
 
 5. Generate Api Key to be able to consume backend
 ```sh
-make apikey_generate name=apiKeyName
+make apikey_generate name=apikeynamelowercase
 ``` 
 
 6. Run migrations
